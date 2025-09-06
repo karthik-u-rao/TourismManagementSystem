@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Tourism.DataAccess.Models;
 
-namespace Tourism.DataAccess
+namespace Tourism.DataAccess   //must match what you used in Program.cs
 {
-    public class TourismDbContext : DbContext
+    public class TourismDbContext : IdentityDbContext<ApplicationUser>
     {
-        public TourismDbContext(DbContextOptions<TourismDbContext> options) : base(options)
-        {
-        }
+        public TourismDbContext(DbContextOptions<TourismDbContext> options) : base(options) { }
 
         public DbSet<Package> Packages { get; set; }
         public DbSet<Booking> Bookings { get; set; }
@@ -15,9 +14,8 @@ namespace Tourism.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // required for Identity tables
 
-            // Relationships
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Package)
                 .WithMany()

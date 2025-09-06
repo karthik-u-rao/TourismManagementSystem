@@ -1,60 +1,68 @@
 ﻿@model Tourism.DataAccess.Models.Package
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @Model.Name;
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Package</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Location)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AvailableSeats)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AvailableSeats)
-        </dd>
-    </dl>
+<!-- Hero Banner -->
+<div class="card mb-4 shadow-sm border-0">
+    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="height:350px; object-fit:cover;" />
+    <div class="card-img-overlay bg-dark bg-opacity-50 d-flex flex-column justify-content-end text-white p-4">
+        <h2 class="fw-bold">@Model.Name</h2>
+        <p class="mb-1"><i class="bi bi-geo-alt"></i> @Model.Location</p>
+        <h4 class="fw-bold text-warning">₹@Model.Price per person</h4>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PackageId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row">
+    <!-- Left: Package Info -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4>Package Overview</h4>
+                <p>@Model.Description</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4>Duration & Availability</h4>
+                <ul class="list-unstyled">
+                    <li><strong>Duration:</strong> @Model.Duration</li>
+                    <li><strong>Seats Available:</strong> @Model.AvailableSeats</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4>What’s Included</h4>
+                <ul>
+                    <li>Hotel accommodation</li>
+                    <li>Daily breakfast</li>
+                    <li>Guided sightseeing tours</li>
+                    <li>Airport transfers</li>
+                </ul>
+                <h4>What’s Not Included</h4>
+                <ul>
+                    <li>Airfare</li>
+                    <li>Personal expenses</li>
+                    <li>Travel insurance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Booking Summary -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4>Book This Package</h4>
+                <p><strong>Price:</strong> <span class="text-success fw-bold">₹@Model.Price per person</span></p>
+                <p><strong>Seats Left:</strong> @Model.AvailableSeats</p>
+                <a asp-controller="Booking" asp-action="Create" asp-route-id="@Model.PackageId"
+                   class="btn btn-primary w-100">Book Now</a>
+            </div>
+        </div>
+    </div>
 </div>

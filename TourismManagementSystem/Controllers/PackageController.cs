@@ -91,6 +91,7 @@ namespace TourismManagementSystem.Controllers
             if (package == null) return NotFound();
             return View(package);
         }
+
         // GET: /Package/Search
         public IActionResult Search(string location, decimal? minPrice, decimal? maxPrice)
         {
@@ -105,8 +106,7 @@ namespace TourismManagementSystem.Controllers
             if (maxPrice.HasValue)
                 query = query.Where(p => p.Price <= maxPrice.Value);
 
-            return View("Index", query.ToList()); // Reuse Index view
+            return View("Index", query.ToList()); // reuse Index view
         }
-
     }
 }

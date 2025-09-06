@@ -15,13 +15,17 @@ namespace Tourism.DataAccess.Models
 
         public Booking Booking { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")] 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
         public DateTime PaymentDate { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public string PaymentStatus { get; set; } // Success, Failed, Refunded
+        public string PaymentStatus { get; set; } // Success, Pending, Failed, Refunded
+
+        // NEW FIELD for cancelled/refund tracking
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? RefundAmount { get; set; }
     }
 }

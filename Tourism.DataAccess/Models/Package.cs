@@ -9,25 +9,31 @@ namespace Tourism.DataAccess.Models
         [Key]
         public int PackageId { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; }
+        [Required, MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required, MaxLength(500)]
+        public string Description { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(500)]
-        public string Description { get; set; }
+        public string Location { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(100)]
-        public string Location { get; set; }
-
-        [Column(TypeName = "decimal(18,2)")] 
         public decimal Price { get; set; }
 
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [Required]
         public DateTime EndDate { get; set; }
 
-        [Range(0, int.MaxValue)]
+        [Required]
         public int AvailableSeats { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        // Computed duration (not stored in DB)
+        [NotMapped]
+        public int Duration => (EndDate - StartDate).Days;
     }
 }

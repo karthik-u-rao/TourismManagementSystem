@@ -1,47 +1,74 @@
 ﻿@model Tourism.DataAccess.Models.Booking
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Book Your Trip";
 }
 
-<h1>Create</h1>
-
-<h4>Booking</h4>
-<hr />
 <div class="row">
+    <!-- Left: Booking Form -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h3 class="mb-3">Traveler Details</h3>
+                <form asp-action="Create" method="post">
+                    <input type="hidden" asp-for="PackageId" />
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="CustomerName" class="form-control" placeholder="Your full name" required />
+                        <label asp-for="CustomerName">Full Name</label>
+                        <span asp-validation-for="CustomerName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="you@example.com" required />
+                        <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="+91 9876543210" required />
+                        <label asp-for="PhoneNumber">Phone Number</label>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Number of Seats</label>
+                        <input asp-for="NumberOfSeats" class="form-control" type="number" min="1" value="1" id="seatInput" />
+                        <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Package Summary -->
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PackageId" class="control-label"></label>
-                <select asp-for="PackageId" class ="form-control" asp-items="ViewBag.PackageId"></select>
+        <div class="card shadow-sm">
+            <img src="@ViewBag.PackageImage" class="card-img-top" alt="Package image" style="height:200px; object-fit:cover;" />
+            <div class="card-body">
+                <h5 class="card-title">@ViewBag.PackageName</h5>
+                <p class="text-muted"><i class="bi bi-geo-alt"></i> @ViewBag.PackageLocation</p>
+                <p><strong>Price per Seat:</strong> ₹<span id="pricePerSeat">@ViewBag.PackagePrice</span></p>
+                <p><strong>Seats Selected:</strong> <span id="seatCount">1</span></p>
+                <h4 class="text-primary">Total: ₹<span id="totalAmount">@ViewBag.PackagePrice</span></h4>
             </div>
-            <div class="form-group">
-                <label asp-for="BookingDate" class="control-label"></label>
-                <input asp-for="BookingDate" class="form-control" />
-                <span asp-validation-for="BookingDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumberOfSeats" class="control-label"></label>
-                <input asp-for="NumberOfSeats" class="form-control" />
-                <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const seatInput = document.getElementById("seatInput");
+        const seatCount = document.getElementById("seatCount");
+        const totalAmount = document.getElementById("totalAmount");
+        const pricePerSeat = parseFloat(document.getElementById("pricePerSeat").innerText);
+
+        seatInput.addEventListener("input", () => {
+            const seats = parseInt(seatInput.value) || 1;
+            seatCount.innerText = seats;
+            totalAmount.innerText = (seats * pricePerSeat).toFixed(2);
+        });
+    </script>
 }

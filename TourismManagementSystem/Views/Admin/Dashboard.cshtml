@@ -1,0 +1,166 @@
+﻿@model IEnumerable<TourismManagementSystem.ViewModels.BookingViewModel>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #28a745, #218838);">
+            <div class="card-body">
+                <h6>Total Revenue</h6>
+                <h3>₹@ViewBag.TotalRevenue</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+            <div class="card-body">
+                <h6>Total Refunds</h6>
+                <h3>₹@ViewBag.TotalRefunds</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+            <div class="card-body">
+                <h6>Total Bookings</h6>
+                <h3>@ViewBag.TotalBookings</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+            <div class="card-body">
+                <h6>Active Bookings</h6>
+                <h3>@ViewBag.ActiveBookings</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Section -->
+<div class="row mb-5">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">📊 Bookings per Package</div>
+            <div class="card-body">
+                <canvas id="bookingsChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">💳 Payment Status</div>
+            <div class="card-body">
+                <canvas id="paymentChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bookings Table -->
+<h3 class="mb-3">All Bookings</h3>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Booking Id</th>
+                <th>Package</th>
+                <th>Location</th>
+                <th>Seats</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.BookingId</td>
+                    <td>@item.PackageName</td>
+                    <td>@item.Location</td>
+                    <td>@item.NumberOfSeats</td>
+                    <td>@item.BookingDate.ToShortDateString()</td>
+                    <td>
+                        @if (item.Status == "Booked")
+                        {
+                            <span class="badge bg-success">Booked</span>
+                        }
+                        else if (item.Status == "Cancelled")
+                        {
+                            <span class="badge bg-danger">Cancelled</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@item.Status</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.PaymentStatus == "Success")
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else if (item.PaymentStatus.StartsWith("Refunded"))
+                        {
+                            <span class="badge bg-warning text-dark">@item.PaymentStatus</span>
+                        }
+                        else if (item.PaymentStatus == "Failed")
+                        {
+                            <span class="badge bg-danger">Failed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Not Paid</span>
+                        }
+                    </td>
+                    <td>₹@item.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Bookings per Package
+        var ctx1 = document.getElementById('bookingsChart').getContext('2d');
+        var bookingsChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels)),
+                datasets: [{
+                    label: 'Bookings',
+                    data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartData)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Payment Status Distribution
+        var ctx2 = document.getElementById('paymentChart').getContext('2d');
+        var paymentChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Paid', 'Refunded', 'Failed', 'Not Paid'],
+                datasets: [{
+                    data: [
+                        @ViewBag.PaidCount,
+                        @ViewBag.RefundedCount,
+                        @ViewBag.FailedCount,
+                        @ViewBag.NotPaidCount
+                    ],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d']
+                }]
+            }
+        });
+    </script>
+}

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Tourism.DataAccess.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<h2>My Bookings</h2>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Package</th>
+            <th>Seats</th>
+            <th>Booking Date</th>
+            <th>Status</th>
+            <th>Payment</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.Package?.Name</td>
+                <td>@booking.NumberOfSeats</td>
+                <td>@booking.BookingDate.ToShortDateString()</td>
+                <td>@booking.Status</td>
+                <td>
+                    @if (booking.Payments.FirstOrDefault() != null)
+                    {
+                        <span class="badge bg-success">@booking.Payments.FirstOrDefault().PaymentStatus</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Pending</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Tourism.DataAccess;
 using Tourism.DataAccess.Models;
+using TourismManagementSystem.ViewModels;
 
 namespace TourismManagementSystem.Controllers
 {
@@ -13,64 +15,95 @@ namespace TourismManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: /Booking/Create/5
-        public IActionResult Create(int packageId)
+        // GET: Booking/Create
+        public async Task<IActionResult> Create(int? packageId)
         {
-            var package = _context.Packages.Find(packageId);
-            if (package == null) return NotFound();
+            if (packageId == null)
+                return NotFound();
 
-            ViewBag.Package = package;
-            return View();
-        }
+            var package = await _context.Packages.FindAsync(packageId);
+            if (package == null)
+                return NotFound();
 
-        // POST: /Booking/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(int packageId, int numberOfSeats)
-        {
-            var package = _context.Packages.Find(packageId);
-            if (package == null || numberOfSeats > package.AvailableSeats)
+            // Pre-fill BookingViewModel
+            var bookingVM = new BookingViewModel
             {
-                ModelState.AddModelError("", "Invalid booking request.");
-                ViewBag.Package = package;
-                return View();
-            }
-
-            var booking = new Booking
-            {
-                PackageId = packageId,
+                PackageId = package.PackageId,
+                PackageName = package.Name,
+                Location = package.Location,
+                Price = package.Price,
                 BookingDate = DateTime.Now,
-                NumberOfSeats = numberOfSeats,
                 Status = "Booked"
             };
 
-            package.AvailableSeats -= numberOfSeats;
+            return View(bookingVM);
+        }
+
+        // POST: Booking/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(BookingViewModel bookingVM)
+        {
+            if (!ModelState.IsValid)
+                return View(bookingVM);
+
+            var package = await _context.Packages.FindAsync(bookingVM.PackageId);
+            if (package == null)
+                return NotFound();
+
+            var booking = new Booking
+            {
+                PackageId = bookingVM.PackageId,
+                NumberOfSeats = bookingVM.NumberOfSeats,
+                BookingDate = DateTime.Now,
+                Status = "Booked"
+            };
 
             _context.Bookings.Add(booking);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return RedirectToAction("History");
+            // Create payment record
+            var payment = new Payment
+            {
+                BookingId = booking.BookingId,
+                Amount = booking.NumberOfSeats * package.Price,
+                PaymentDate = DateTime.Now,
+                PaymentStatus = "Success"
+            };
+
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(History));
         }
 
         // GET: /Booking/History
         public IActionResult History()
         {
-            var bookings = _context.Bookings
-                .Join(_context.Packages,
-                      b => b.PackageId,
-                      p => p.PackageId,
-                      (b, p) => new Booking
-                      {
-                          BookingId = b.BookingId,
-                          PackageId = b.PackageId,
-                          Package = p,
-                          NumberOfSeats = b.NumberOfSeats,
-                          BookingDate = b.BookingDate,
-                          Status = b.Status
-                      })
+            var history = _context.Bookings
+                .Include(b => b.Package)
+                .Select(b => new BookingViewModel
+                {
+                    BookingId = b.BookingId,
+                    PackageId = b.PackageId,
+                    PackageName = b.Package.Name,
+                    Location = b.Package.Location,
+                    Price = b.Package.Price,
+                    NumberOfSeats = b.NumberOfSeats,
+                    BookingDate = b.BookingDate,
+                    Status = b.Status,
+                    PaymentStatus = _context.Payments
+                        .Where(p => p.BookingId == b.BookingId)
+                        .Select(p => p.PaymentStatus)
+                        .FirstOrDefault() ?? "Not Paid",
+                    Amount = _context.Payments
+                        .Where(p => p.BookingId == b.BookingId)
+                        .Select(p => p.Amount)
+                        .FirstOrDefault()
+                })
                 .ToList();
 
-            return View(bookings);
+            return View(history);
         }
 
         [HttpPost]
@@ -81,11 +114,17 @@ namespace TourismManagementSystem.Controllers
             if (booking == null) return NotFound();
 
             booking.Status = "Cancelled";
+
+            var payment = _context.Payments.FirstOrDefault(p => p.BookingId == booking.BookingId);
+            if (payment != null && payment.PaymentStatus == "Success")
+            {
+                var refundAmount = payment.Amount * 0.85m; // 15% deduction
+                payment.PaymentStatus = "Refunded";
+                payment.RefundAmount = refundAmount;
+            }
+
             _context.SaveChanges();
-
-            // Refund logic will be added when I integrate Payment
-            TempData["Message"] = "Booking cancelled successfully (refund: 85% of amount).";
-
+            TempData["Message"] = "Booking cancelled successfully. Refund processed with 15% deduction.";
             return RedirectToAction("History");
         }
     }

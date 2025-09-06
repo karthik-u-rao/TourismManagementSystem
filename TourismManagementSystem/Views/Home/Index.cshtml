@@ -1,8 +1,83 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to Tourism Portal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section text-center text-white d-flex align-items-center justify-content-center">
+    <div class="overlay"></div>
+    <div class="content">
+        <h1 class="display-3 fw-bold">Find Your Next Adventure 🌍</h1>
+        <p class="lead">Discover packages, book trips, and explore the world with us</p>
+        <form method="get" asp-controller="Package" asp-action="Search" class="row g-2 justify-content-center mt-4">
+            <div class="col-md-3">
+                <input type="text" name="location" class="form-control form-control-lg" placeholder="Where to?" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="minPrice" class="form-control form-control-lg" placeholder="Min Price" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="maxPrice" class="form-control form-control-lg" placeholder="Max Price" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold mb-4">Featured Packages ✈️</h2>
+    <div class="row">
+        @* Example static cards, replace with dynamic packages later *@
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0 package-card">
+                <img src="https://source.unsplash.com/600x400/?beach" class="card-img-top" alt="Beach">
+                <div class="card-body">
+                    <h5 class="card-title">Goa Getaway</h5>
+                    <p class="card-text">3 Nights, 4 Days – Starting ₹8,999</p>
+                    <a asp-controller="Package" asp-action="Details" asp-route-id="1" class="btn btn-outline-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0 package-card">
+                <img src="https://source.unsplash.com/600x400/?mountains" class="card-img-top" alt="Mountains">
+                <div class="card-body">
+                    <h5 class="card-title">Manali Adventure</h5>
+                    <p class="card-text">5 Nights, 6 Days – Starting ₹12,499</p>
+                    <a asp-controller="Package" asp-action="Details" asp-route-id="2" class="btn btn-outline-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0 package-card">
+                <img src="https://source.unsplash.com/600x400/?desert" class="card-img-top" alt="Desert">
+                <div class="card-body">
+                    <h5 class="card-title">Rajasthan Heritage Tour</h5>
+                    <p class="card-text">4 Nights, 5 Days – Starting ₹10,999</p>
+                    <a asp-controller="Package" asp-action="Details" asp-route-id="3" class="btn btn-outline-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        position: relative;
+        height: 80vh;
+        background: url('https://source.unsplash.com/1600x800/?travel,landscape') no-repeat center center/cover;
+    }
+    .hero-section .overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+    }
+    .hero-section .content {
+        position: relative;
+        z-index: 2;
+    }
+    .package-card img {
+        height: 220px;
+        object-fit: cover;
+    }
+</style>

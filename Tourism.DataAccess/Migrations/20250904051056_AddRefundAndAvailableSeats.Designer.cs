@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.DataAccess;
 
@@ -11,9 +12,11 @@ using Tourism.DataAccess;
 namespace Tourism.DataAccess.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    partial class TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250904051056_AddRefundAndAvailableSeats")]
+    partial class AddRefundAndAvailableSeats
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,7 +256,7 @@ namespace Tourism.DataAccess.Migrations
 
                     b.HasIndex("PackageId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("Tourism.DataAccess.Models.Package", b =>
@@ -300,7 +303,7 @@ namespace Tourism.DataAccess.Migrations
 
                     b.HasKey("PackageId");
 
-                    b.ToTable("Packages", (string)null);
+                    b.ToTable("Packages");
                 });
 
             modelBuilder.Entity("Tourism.DataAccess.Models.Payment", b =>
@@ -339,7 +342,7 @@ namespace Tourism.DataAccess.Migrations
                         .IsUnique()
                         .HasFilter("[BookingId1] IS NOT NULL");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

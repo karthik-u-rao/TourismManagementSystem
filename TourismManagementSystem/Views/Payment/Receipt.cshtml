@@ -1,0 +1,13 @@
+﻿@model Tourism.DataAccess.Models.Payment
+
+<div class="container mt-4 text-center">
+    <h2 class="text-success">Payment Successful!</h2>
+    <p class="mt-3">Thank you for your payment.</p>
+
+    <h5 class="mt-3">Booking: @Model.Booking.Package.Name</h5>
+    <p>Seats: @Model.Booking.NumberOfSeats</p>
+    <p>Total Paid: <strong>₹@Model.Amount</strong></p>
+    <p>Status: <span class="badge bg-success">@Model.PaymentStatus</span></p>
+
+    <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-primary mt-3">My Bookings</a>
+</div>

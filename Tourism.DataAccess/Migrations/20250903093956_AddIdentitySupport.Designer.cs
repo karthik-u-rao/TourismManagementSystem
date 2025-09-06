@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.DataAccess;
 
@@ -11,9 +12,11 @@ using Tourism.DataAccess;
 namespace Tourism.DataAccess.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    partial class TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250903093956_AddIdentitySupport")]
+    partial class AddIdentitySupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,6 +162,38 @@ namespace Tourism.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal?>("RefundAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("Tourism.DataAccess.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -243,17 +278,14 @@ namespace Tourism.DataAccess.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("BookingId");
 
                     b.HasIndex("PackageId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("Tourism.DataAccess.Models.Package", b =>
@@ -272,15 +304,8 @@ namespace Tourism.DataAccess.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -300,46 +325,7 @@ namespace Tourism.DataAccess.Migrations
 
                     b.HasKey("PackageId");
 
-                    b.ToTable("Packages", (string)null);
-                });
-
-            modelBuilder.Entity("Tourism.DataAccess.Models.Payment", b =>
-                {
-                    b.Property<int>("PaymentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BookingId1")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal?>("RefundAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("PaymentId");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("BookingId1")
-                        .IsUnique()
-                        .HasFilter("[BookingId1] IS NOT NULL");
-
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Packages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -393,6 +379,17 @@ namespace Tourism.DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Payment", b =>
+                {
+                    b.HasOne("Tourism.DataAccess.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+                });
+
             modelBuilder.Entity("Tourism.DataAccess.Models.Booking", b =>
                 {
                     b.HasOne("Tourism.DataAccess.Models.Package", "Package")
@@ -402,27 +399,6 @@ namespace Tourism.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Package");
-                });
-
-            modelBuilder.Entity("Tourism.DataAccess.Models.Payment", b =>
-                {
-                    b.HasOne("Tourism.DataAccess.Models.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tourism.DataAccess.Models.Booking", null)
-                        .WithOne("Payment")
-                        .HasForeignKey("Tourism.DataAccess.Models.Payment", "BookingId1");
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("Tourism.DataAccess.Models.Booking", b =>
-                {
-                    b.Navigation("Payment")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
