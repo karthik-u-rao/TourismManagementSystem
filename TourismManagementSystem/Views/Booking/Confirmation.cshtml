@@ -4,19 +4,37 @@
     ViewData["Title"] = "Booking Confirmation";
 }
 
-<h2>Booking Confirmation</h2>
-<hr />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h2><i class="bi bi-check-circle"></i> Booking Confirmed!</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <strong>Congratulations!</strong> Your booking has been confirmed successfully.
+                    </div>
 
-<div class="card p-3">
-    <h4>@Model.PackageName</h4>
-    <p><strong>Location:</strong> @Model.Location</p>
-    <p><strong>Price per Seat:</strong> ₹@Model.Price</p>
-    <p><strong>Seats Booked:</strong> @Model.NumberOfSeats</p>
-    <p><strong>Total Amount:</strong> ₹@(Model.Price* Model.NumberOfSeats)</p>
+                    <h4>Booking Details</h4>
+                    <hr />
+                    
+                    <p><strong>Booking ID:</strong> #@Model.BookingId</p>
+                    <p><strong>Package:</strong> @Model.PackageName</p>
+                    <p><strong>Location:</strong> @Model.Location</p>
+                    <p><strong>Customer Name:</strong> @Model.CustomerName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+                    <p><strong>Number of Seats:</strong> @Model.NumberOfSeats</p>
+                    <p><strong>Total Amount:</strong> ₹@Model.Amount</p>
+                    <p><strong>Payment Status:</strong> @Model.PaymentStatus</p>
+
+                    <div class="mt-4">
+                        <a asp-action="History" class="btn btn-primary">View My Bookings</a>
+                        <a asp-controller="Package" asp-action="Index" class="btn btn-outline-secondary">Browse More Packages</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<form asp-controller="Payment" asp-action="Payment" method="post">
-    <input type="hidden" name="BookingId" value="@Model.BookingId" />
-    <input type="hidden" name="Amount" value="@(Model.Price* Model.NumberOfSeats)" />
-    <button type="submit" class="btn btn-primary mt-3">Proceed to Payment</button>
-</form>

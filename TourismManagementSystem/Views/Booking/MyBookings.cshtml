@@ -21,14 +21,14 @@
         @foreach (var booking in Model)
         {
             <tr>
-                <td>@booking.Package?.Name</td>
+                <td>@(booking.Package?.Name ?? "Unknown Package")</td>
                 <td>@booking.NumberOfSeats</td>
                 <td>@booking.BookingDate.ToShortDateString()</td>
                 <td>@booking.Status</td>
                 <td>
                     @if (booking.Payments.FirstOrDefault() != null)
                     {
-                        <span class="badge bg-success">@booking.Payments.FirstOrDefault().PaymentStatus</span>
+                        <span class="badge bg-success">@booking.Payments.FirstOrDefault()!.PaymentStatus</span>
                     }
                     else
                     {

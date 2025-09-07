@@ -13,7 +13,7 @@ namespace Tourism.DataAccess.Models
         [ForeignKey("Booking")]
         public int BookingId { get; set; }
 
-        public Booking Booking { get; set; }
+        public Booking Booking { get; set; } = null!;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
@@ -22,7 +22,7 @@ namespace Tourism.DataAccess.Models
 
         [Required]
         [MaxLength(20)]
-        public string PaymentStatus { get; set; } // Success, Pending, Failed, Refunded
+        public string PaymentStatus { get; set; } = "Pending"; // Success, Pending, Failed, Refunded
 
         // NEW FIELD for cancelled/refund tracking
         [Column(TypeName = "decimal(18,2)")]

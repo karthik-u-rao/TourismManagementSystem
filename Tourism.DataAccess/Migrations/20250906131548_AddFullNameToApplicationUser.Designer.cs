@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.DataAccess;
 
@@ -11,9 +12,11 @@ using Tourism.DataAccess;
 namespace Tourism.DataAccess.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    partial class TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906131548_AddFullNameToApplicationUser")]
+    partial class AddFullNameToApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,8 +249,7 @@ namespace Tourism.DataAccess.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
@@ -257,8 +259,7 @@ namespace Tourism.DataAccess.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -266,10 +267,6 @@ namespace Tourism.DataAccess.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("BookingId");
-
-                    b.HasIndex("BookingDate");
-
-                    b.HasIndex("Email");
 
                     b.HasIndex("PackageId");
 
@@ -289,20 +286,18 @@ namespace Tourism.DataAccess.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -316,10 +311,6 @@ namespace Tourism.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("PackageId");
-
-                    b.HasIndex("Location");
-
-                    b.HasIndex("StartDate");
 
                     b.ToTable("Packages");
                 });
@@ -338,6 +329,9 @@ namespace Tourism.DataAccess.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BookingId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
@@ -352,6 +346,8 @@ namespace Tourism.DataAccess.Migrations
                     b.HasKey("PaymentId");
 
                     b.HasIndex("BookingId");
+
+                    b.HasIndex("BookingId1");
 
                     b.ToTable("Payments");
                 });
@@ -410,9 +406,9 @@ namespace Tourism.DataAccess.Migrations
             modelBuilder.Entity("Tourism.DataAccess.Models.Booking", b =>
                 {
                     b.HasOne("Tourism.DataAccess.Models.Package", "Package")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Package");
@@ -421,10 +417,14 @@ namespace Tourism.DataAccess.Migrations
             modelBuilder.Entity("Tourism.DataAccess.Models.Payment", b =>
                 {
                     b.HasOne("Tourism.DataAccess.Models.Booking", "Booking")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Tourism.DataAccess.Models.Booking", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("BookingId1");
 
                     b.Navigation("Booking");
                 });
@@ -432,11 +432,6 @@ namespace Tourism.DataAccess.Migrations
             modelBuilder.Entity("Tourism.DataAccess.Models.Booking", b =>
                 {
                     b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("Tourism.DataAccess.Models.Package", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }
