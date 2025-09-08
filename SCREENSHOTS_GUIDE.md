@@ -27,42 +27,42 @@ screenshots/
 - Featured packages section
 - Features section
 - Navigation bar visible
-- URL: https://localhost:5001/
+- URL: https://localhost:5211/
 
 ### 2. Package Listing (packages.png)
 - All packages displayed in grid
 - Search/filter functionality
 - Package cards with images
 - Pricing and availability info
-- URL: https://localhost:5001/Package
+- URL: https://localhost:5211/Package
 
 ### 3. Package Details (package-details.png)
 - Package hero image
 - Detailed information
 - Booking sidebar
 - Inclusions/exclusions
-- URL: https://localhost:5001/Package/Details/1
+- URL: https://localhost:5211/Package/Details/1
 
 ### 4. Booking Form (booking-form.png)
 - Customer information form
 - Package summary sidebar
 - Validation messages
 - Total calculation
-- URL: https://localhost:5001/Booking/Create/1
+- URL: https://localhost:5211/Booking/Create/1
 
 ### 5. Booking Confirmation (booking-confirmation.png)
 - Booking details
 - Confirmation number
 - Payment information
 - Next steps
-- URL: https://localhost:5001/Booking/Confirmation/1
+- URL: https://localhost:5211/Booking/Confirmation/1
 
 ### 6. Admin Dashboard (admin-dashboard.png)
 - Statistics cards
 - Charts and graphs
 - Recent bookings table
 - Quick actions
-- URL: https://localhost:5001/Admin/Dashboard
+- URL: https://localhost:5211/Admin/Dashboard
 - Login: karthik@tourism.com / Karthik@123
 
 ### 7. User Management (user-management.png)
@@ -70,21 +70,21 @@ screenshots/
 - User actions
 - Role information
 - Admin navigation
-- URL: https://localhost:5001/Admin/Users
+- URL: https://localhost:5211/Admin/Users
 
 ### 8. Payment Process (payment.png)
 - Payment form
 - Booking summary
 - Security information
 - Total amount
-- URL: https://localhost:5001/Payment/Checkout/1
+- URL: https://localhost:5211/Payment/Checkout/1
 
 ### 9. Admin Package Management (admin-packages.png)
 - Package grid view
 - CRUD action buttons
 - Package statistics
 - Add new package button
-- URL: https://localhost:5001/Admin/Packages
+- URL: https://localhost:5211/Admin/Packages
 
 ### 10. Mobile View (mobile-view.png)
 - Responsive navigation
