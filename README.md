@@ -60,35 +60,35 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 
 ### Home Page
 The landing page with hero section and featured packages
-![Homepage](screenshots/homepage.png)
+![Homepage](Screenshots/homepage.png)
 
 ### Package Listings
 Browse all available tourism packages with search and filter options
-![Package Listings](screenshots/Package.png)
+![Package Listings](Screenshots/Package.png)
 
 ### Package Details
 Detailed view of individual packages with booking options
-![Package Details](screenshots/Package_Details.png)
+![Package Details](Screenshots/Package_Details.png)
 
 ### Booking System
 Easy-to-use booking form with real-time pricing calculations
-![Booking Create](screenshots/Booking_Create.png)
+![Booking Create](Screenshots/Booking_Create.png)
 
 ### Booking Confirmation
 Confirmation page with booking details and payment information
-![Booking Confirmation](screenshots/Booking_Confirmation.png)
+![Booking Confirmation](Screenshots/Booking_Confirmation.png)
 
 ### Admin Package Management
 Administrative interface for managing tourism packages
-![Admin Packages](screenshots/Admin_Packages.png)
+![Admin Packages](Screenshots/Admin_Packages.png)
 
 ### Package Creation
 Admin interface for creating new tourism packages
-![Package Create](screenshots/Package_Create.png)
+![Package Create](Screenshots/Package_Create.png)
 
 ### User Management
 Admin dashboard for managing system users
-![Admin Users](screenshots/Admin_Users.png)
+![Admin Users](Screenshots/Admin_Users.png)
 
 ## Technology Stack
 
@@ -195,7 +195,7 @@ TourismManagementSystem/
 ?   ??? Models/                       # Entity models
 ?   ??? Migrations/                   # EF migrations
 ?   ??? TourismDbContext.cs          # Database context
-??? screenshots/                      # Application screenshots
+??? Screenshots/                      # Application screenshots
 ??? README.md                        # This file
 ```
 
