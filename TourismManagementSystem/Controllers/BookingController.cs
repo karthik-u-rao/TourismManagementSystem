@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tourism.DataAccess;
 using Tourism.DataAccess.Models;
 using TourismManagementSystem.ViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace TourismManagementSystem.Controllers
 {
@@ -94,58 +95,30 @@ namespace TourismManagementSystem.Controllers
             ModelState.Remove("Payments");
             ModelState.Remove("BookingId");
 
-            // Manual validation for better control
-            var validationErrors = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(booking.CustomerName))
+            // Use proper email validation
+            if (!string.IsNullOrWhiteSpace(booking.Email))
             {
-                validationErrors.Add("Customer name is required");
-                ModelState.AddModelError("CustomerName", "Customer name is required");
-            }
-            else if (booking.CustomerName.Length < 2)
-            {
-                validationErrors.Add("Customer name must be at least 2 characters");
-                ModelState.AddModelError("CustomerName", "Customer name must be at least 2 characters");
+                var emailAttribute = new EmailAddressAttribute();
+                if (!emailAttribute.IsValid(booking.Email))
+                {
+                    ModelState.AddModelError("Email", "Please enter a valid email address");
+                }
             }
 
-            if (string.IsNullOrWhiteSpace(booking.Email))
-            {
-                validationErrors.Add("Email is required");
-                ModelState.AddModelError("Email", "Email is required");
-            }
-            else if (!booking.Email.Contains("@") || !booking.Email.Contains("."))
-            {
-                validationErrors.Add("Please enter a valid email address");
-                ModelState.AddModelError("Email", "Please enter a valid email address");
-            }
-
-            if (string.IsNullOrWhiteSpace(booking.PhoneNumber))
-            {
-                validationErrors.Add("Phone number is required");
-                ModelState.AddModelError("PhoneNumber", "Phone number is required");
-            }
-            else if (booking.PhoneNumber.Length < 10)
-            {
-                validationErrors.Add("Phone number must be at least 10 digits");
-                ModelState.AddModelError("PhoneNumber", "Phone number must be at least 10 digits");
-            }
-
-            if (booking.NumberOfSeats <= 0 || booking.NumberOfSeats > 10)
-            {
-                validationErrors.Add("Number of seats must be between 1 and 10");
-                ModelState.AddModelError("NumberOfSeats", "Number of seats must be between 1 and 10");
-            }
-
-            // Check seat availability
+            // Business validation for seat availability
             if (package.AvailableSeats < booking.NumberOfSeats)
             {
-                validationErrors.Add($"Only {package.AvailableSeats} seats available");
                 ModelState.AddModelError("NumberOfSeats", $"Only {package.AvailableSeats} seats available");
             }
 
             // If there are validation errors, display them
-            if (validationErrors.Any())
+            if (!ModelState.IsValid)
             {
+                var validationErrors = ModelState
+                    .Where(x => x.Value?.Errors.Count > 0)
+                    .SelectMany(x => x.Value?.Errors.Select(e => e.ErrorMessage) ?? new List<string>())
+                    .ToList();
+                
                 TempData["Error"] = "Please fix the following errors: " + string.Join(", ", validationErrors);
                 System.Diagnostics.Debug.WriteLine($"Validation errors: {string.Join(", ", validationErrors)}");
                 return View(booking);
@@ -223,7 +196,8 @@ namespace TourismManagementSystem.Controllers
                 Email = booking.Email,
                 PhoneNumber = booking.PhoneNumber,
                 PaymentStatus = payment?.PaymentStatus ?? "Not Paid",
-                Amount = payment?.Amount ?? 0
+                Amount = payment?.Amount ?? 0,
+                ImageUrl = booking.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
             };
 
             return View(viewModel);
@@ -251,7 +225,8 @@ namespace TourismManagementSystem.Controllers
                     PaymentStatus = b.Payments.FirstOrDefault() != null ? 
                         b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
                     Amount = b.Payments.FirstOrDefault() != null ? 
-                        b.Payments.FirstOrDefault()!.Amount : 0
+                        b.Payments.FirstOrDefault()!.Amount : 0,
+                    ImageUrl = b.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
                 })
                 .ToListAsync();
 
@@ -261,9 +236,33 @@ namespace TourismManagementSystem.Controllers
         // GET: /Booking/MyBookings
         public async Task<IActionResult> MyBookings()
         {
-            // In a real app, you'd filter by current user
-            // For now, showing all bookings
-            return await History();
+            // Get bookings with package information and images
+            var myBookings = await _context.Bookings
+                .Include(b => b.Package)
+                .Include(b => b.Payments)
+                .Select(b => new BookingViewModel
+                {
+                    BookingId = b.BookingId,
+                    PackageId = b.PackageId,
+                    PackageName = b.Package.Name,
+                    Location = b.Package.Location,
+                    Price = b.Package.Price,
+                    NumberOfSeats = b.NumberOfSeats,
+                    BookingDate = b.BookingDate,
+                    Status = b.Status,
+                    CustomerName = b.CustomerName,
+                    Email = b.Email,
+                    PhoneNumber = b.PhoneNumber,
+                    PaymentStatus = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
+                    Amount = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.Amount : 0,
+                    ImageUrl = b.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
+                })
+                .OrderByDescending(b => b.BookingDate)
+                .ToListAsync();
+
+            return View(myBookings);
         }
 
         [HttpPost]
@@ -280,7 +279,7 @@ namespace TourismManagementSystem.Controllers
             if (booking.Status == "Cancelled")
             {
                 TempData["Error"] = "Booking is already cancelled.";
-                return RedirectToAction("History");
+                return RedirectToAction("MyBookings");
             }
 
             booking.Status = "Cancelled";
@@ -300,7 +299,7 @@ namespace TourismManagementSystem.Controllers
 
             await _context.SaveChangesAsync();
             TempData["Success"] = "Booking cancelled successfully. Refund processed with 15% deduction.";
-            return RedirectToAction("History");
+            return RedirectToAction("MyBookings");
         }
 
         // GET: Booking/Test - Simple test method to verify database connection

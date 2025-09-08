@@ -45,53 +45,53 @@
 <!-- Summary Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #28a745, #218838);">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #28a745, #218838);">
+            <div class="card-body text-white">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6>Total Revenue</h6>
-                        <h3>₹@ViewBag.TotalRevenue</h3>
+                        <h6 class="text-white-50 mb-1">Total Revenue</h6>
+                        <h3 class="fw-bold text-white mb-0">₹@(ViewBag.TotalRevenue ?? 0)</h3>
                     </div>
-                    <i class="bi bi-currency-rupee display-6"></i>
+                    <i class="bi bi-currency-rupee display-6 text-white opacity-75"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+            <div class="card-body text-white">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6>Total Refunds</h6>
-                        <h3>₹@ViewBag.TotalRefunds</h3>
+                        <h6 class="text-white-50 mb-1">Total Refunds</h6>
+                        <h3 class="fw-bold text-white mb-0">₹@(ViewBag.TotalRefunds ?? 0)</h3>
                     </div>
-                    <i class="bi bi-arrow-return-left display-6"></i>
+                    <i class="bi bi-arrow-return-left display-6 text-white opacity-75"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #007bff, #0056b3);">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+            <div class="card-body text-white">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6>Total Bookings</h6>
-                        <h3>@ViewBag.TotalBookings</h3>
+                        <h6 class="text-white-50 mb-1">Total Bookings</h6>
+                        <h3 class="fw-bold text-white mb-0">@(ViewBag.TotalBookings ?? 0)</h3>
                     </div>
-                    <i class="bi bi-calendar-check display-6"></i>
+                    <i class="bi bi-calendar-check display-6 text-white opacity-75"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient text-white" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
+        <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+            <div class="card-body text-white">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6>Active Bookings</h6>
-                        <h3>@ViewBag.ActiveBookings</h3>
+                        <h6 class="text-white-50 mb-1">Active Bookings</h6>
+                        <h3 class="fw-bold text-white mb-0">@(ViewBag.ActiveBookings ?? 0)</h3>
                     </div>
-                    <i class="bi bi-check-circle display-6"></i>
+                    <i class="bi bi-check-circle display-6 text-white opacity-75"></i>
                 </div>
             </div>
         </div>

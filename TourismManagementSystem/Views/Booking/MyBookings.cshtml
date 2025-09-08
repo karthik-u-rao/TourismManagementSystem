@@ -1,41 +1,217 @@
-﻿@model IEnumerable<Tourism.DataAccess.Models.Booking>
+﻿@model IEnumerable<TourismManagementSystem.ViewModels.BookingViewModel>
 
 @{
     ViewData["Title"] = "My Bookings";
 }
 
-<h2>My Bookings</h2>
-<hr />
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">My Bookings</h2>
+        <a asp-controller="Package" asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Book New Trip
+        </a>
+    </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Package</th>
-            <th>Seats</th>
-            <th>Booking Date</th>
-            <th>Status</th>
-            <th>Payment</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var booking in Model)
-        {
-            <tr>
-                <td>@(booking.Package?.Name ?? "Unknown Package")</td>
-                <td>@booking.NumberOfSeats</td>
-                <td>@booking.BookingDate.ToShortDateString()</td>
-                <td>@booking.Status</td>
-                <td>
-                    @if (booking.Payments.FirstOrDefault() != null)
-                    {
-                        <span class="badge bg-success">@booking.Payments.FirstOrDefault()!.PaymentStatus</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning">Pending</span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (!Model.Any())
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                        <h4>No Bookings Yet</h4>
+                        <p class="text-muted mb-4">You haven't made any bookings yet. Start exploring amazing destinations!</p>
+                        <a asp-controller="Package" asp-action="Index" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-seam"></i> Browse Packages
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var booking in Model)
+            {
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card shadow-sm h-100 booking-card">
+                        <!-- Package Image -->
+                        <div class="position-relative">
+                            <img src="@(string.IsNullOrEmpty(booking.ImageUrl) ? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80" : booking.ImageUrl)" 
+                                 class="card-img-top" alt="@booking.PackageName" style="height: 200px; object-fit: cover;" />
+                            
+                            <!-- Status Badge -->
+                            <div class="position-absolute top-0 end-0 m-2">
+                                @if (booking.Status == "Booked")
+                                {
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-check-circle"></i> Confirmed
+                                    </span>
+                                }
+                                else if (booking.Status == "Cancelled")
+                                {
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="bi bi-x-circle"></i> Cancelled
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary fs-6">@booking.Status</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <!-- Package Info -->
+                            <h5 class="card-title fw-bold">@booking.PackageName</h5>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-geo-alt text-primary"></i> @booking.Location
+                            </p>
+
+                            <!-- Booking Details -->
+                            <div class="mb-3">
+                                <div class="row g-2 small">
+                                    <div class="col-6">
+                                        <strong>Booking ID:</strong><br>
+                                        <span class="text-muted">#@booking.BookingId</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Seats:</strong><br>
+                                        <span class="text-muted">@booking.NumberOfSeats</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Booked On:</strong><br>
+                                        <span class="text-muted">@booking.BookingDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Customer:</strong><br>
+                                        <span class="text-muted">@booking.CustomerName</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Status -->
+                            <div class="mb-3">
+                                <strong>Payment Status:</strong>
+                                @if (booking.PaymentStatus == "Success")
+                                {
+                                    <span class="badge bg-success ms-1">
+                                        <i class="bi bi-credit-card"></i> Paid
+                                    </span>
+                                }
+                                else if (booking.PaymentStatus == "Refunded")
+                                {
+                                    <span class="badge bg-warning text-dark ms-1">
+                                        <i class="bi bi-arrow-return-left"></i> Refunded
+                                    </span>
+                                }
+                                else if (booking.PaymentStatus == "Failed")
+                                {
+                                    <span class="badge bg-danger ms-1">
+                                        <i class="bi bi-exclamation-triangle"></i> Failed
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary ms-1">
+                                        <i class="bi bi-clock"></i> @booking.PaymentStatus
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Amount -->
+                            <div class="mb-3">
+                                <h5 class="text-success fw-bold mb-0">
+                                    <i class="bi bi-currency-rupee"></i>@booking.Amount.ToString("N0")
+                                </h5>
+                                <small class="text-muted">Total Amount</small>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="mt-auto">
+                                <div class="d-grid gap-2">
+                                    <a asp-controller="Package" asp-action="Details" asp-route-id="@booking.PackageId" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Package
+                                    </a>
+                                    
+                                    @if (booking.Status == "Booked")
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100" 
+                                                    onclick="return confirm('Are you sure you want to cancel this booking? A 15% cancellation fee will be deducted.')">
+                                                <i class="bi bi-x-circle"></i> Cancel Booking
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info Footer -->
+                        <div class="card-footer bg-light">
+                            <small class="text-muted">
+                                <i class="bi bi-envelope"></i> @booking.Email | 
+                                <i class="bi bi-telephone"></i> @booking.PhoneNumber
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Summary Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">Booking Summary</h5>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <h4 class="text-primary">@Model.Count()</h4>
+                                <small class="text-muted">Total Bookings</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-success">@Model.Count(b => b.Status == "Booked")</h4>
+                                <small class="text-muted">Active</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-warning">@Model.Count(b => b.Status == "Cancelled")</h4>
+                                <small class="text-muted">Cancelled</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-info">@Model.Sum(b => b.NumberOfSeats)</h4>
+                                <small class="text-muted">Total Seats</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .booking-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    
+    .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+    
+    .booking-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .badge {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
