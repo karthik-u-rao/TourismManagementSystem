@@ -1,4 +1,4 @@
-# Tourism Management System
+﻿# Tourism Management System
 
 A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework Core for managing tourism packages, bookings, and customer relationships.
 
@@ -176,27 +176,27 @@ Before running this application, make sure you have the following installed:
 
 ```
 TourismManagementSystem/
-??? TourismManagementSystem/          # Main web application
-?   ??? Controllers/                  # MVC Controllers
-?   ??? Views/                        # Razor Views
-?   ?   ??? Home/                     # Homepage views
-?   ?   ??? Package/                  # Package management views
-?   ?   ??? Booking/                  # Booking views
-?   ?   ??? Admin/                    # Admin panel views
-?   ?   ??? Payment/                  # Payment views
-?   ?   ??? Shared/                   # Shared layouts
-?   ??? Areas/Identity/               # Identity UI
-?   ??? Services/                     # Business logic services
-?   ??? ViewModels/                   # View models
-?   ??? Data/                         # Data seeding
-?   ??? wwwroot/                      # Static files
-?   ??? Program.cs                    # Application entry point
-??? Tourism.DataAccess/               # Data access layer
-?   ??? Models/                       # Entity models
-?   ??? Migrations/                   # EF migrations
-?   ??? TourismDbContext.cs          # Database context
-??? Screenshots/                      # Application screenshots
-??? README.md                        # This file
+├── TourismManagementSystem/          # Main web application
+│   ├── Controllers/                  # MVC Controllers
+│   ├── Views/                        # Razor Views
+│   │   ├── Home/                     # Homepage views
+│   │   ├── Package/                  # Package management views
+│   │   ├── Booking/                  # Booking views
+│   │   ├── Admin/                    # Admin panel views
+│   │   ├── Payment/                  # Payment views
+│   │   └── Shared/                   # Shared layouts
+│   ├── Areas/Identity/               # Identity UI
+│   ├── Services/                     # Business logic services
+│   ├── ViewModels/                   # View models
+│   ├── Data/                         # Data seeding
+│   ├── wwwroot/                      # Static files
+│   └── Program.cs                    # Application entry point
+├── Tourism.DataAccess/               # Data access layer
+│   ├── Models/                       # Entity models
+│   ├── Migrations/                   # EF migrations
+│   └── TourismDbContext.cs          # Database context
+├── Screenshots/                      # Application screenshots
+└── README.md                        # This file
 ```
 
 ## Key Components
@@ -238,14 +238,6 @@ The application uses SQL Server with Entity Framework Core. Connection string is
 - Authentication - ASP.NET Core Identity
 - Authorization - Role-based access control
 - User Data Isolation - Users can only access their own bookings
-
-## Responsive Design
-
-The application is responsive and works across:
-- Desktop (1920px and above)
-- Laptop (1024px - 1919px)
-- Tablet (768px - 1023px)
-- Mobile (320px - 767px)
 
 ## Database Schema
 
@@ -294,45 +286,6 @@ POST   /Admin/UpdateBookingStatus  - Update booking status
 - **Admin Analytics** - Comprehensive dashboard with charts and statistics
 - **Secure Payments** - Payment processing with refund management
 - **User Role Management** - Separate interfaces for customers and administrators
-
-## Deployment
-
-### Deploy to Azure
-1. Create Azure App Service
-2. Configure connection strings
-3. Set up CI/CD pipeline
-4. Deploy using Visual Studio or Azure CLI
-
-### Deploy to IIS
-1. Publish the application
-2. Configure IIS
-3. Set up application pool
-4. Configure connection strings
-
-## Contributing
-
-We welcome contributions. Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-3. Commit your changes
-   ```bash
-   git commit -m "Add some feature"
-   ```
-4. Push to the branch
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-5. Open a Pull Request
-
-### Code Style Guidelines
-- Follow C# coding conventions
-- Use meaningful variable and method names
-- Add XML documentation for public methods
-- Write unit tests for new features
 
 ## License
 
