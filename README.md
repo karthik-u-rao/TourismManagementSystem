@@ -130,7 +130,7 @@ Before running this application, make sure you have the following installed:
    ```
 
 2. Access the application
-   - Open your browser and navigate to https://localhost:5001
+   - Open your browser and navigate to https://localhost:5211
    - Register as a new customer or login as admin
 
 3. Admin Login
