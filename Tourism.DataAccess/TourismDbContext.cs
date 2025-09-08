@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Tourism.DataAccess.Models;
 
-namespace Tourism.DataAccess   //must match what you used in Program.cs
+namespace Tourism.DataAccess  
 {
     public class TourismDbContext : IdentityDbContext<ApplicationUser>
     {

@@ -5,6 +5,7 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 ## Table of Contents
 
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Technology Stack](#technology-stack)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
@@ -34,7 +35,7 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 - Real-time Booking with seat availability checks
 - Booking History for customers
 - Booking Status Management (Pending, Booked, Cancelled)
-- Cancellation with Refund Processing
+- Cancellation with Refund Processing (15% deduction)
 
 ### Payment Processing
 - Payment simulation for demonstration purposes
@@ -54,6 +55,40 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 - Interactive Components with smooth animations
 - Mobile-Friendly interface
 - Clean and modern design elements
+
+## Screenshots
+
+### Home Page
+The landing page with hero section and featured packages
+![Homepage](screenshots/homepage.png)
+
+### Package Listings
+Browse all available tourism packages with search and filter options
+![Package Listings](screenshots/Package.png)
+
+### Package Details
+Detailed view of individual packages with booking options
+![Package Details](screenshots/Package_Details.png)
+
+### Booking System
+Easy-to-use booking form with real-time pricing calculations
+![Booking Create](screenshots/Booking_Create.png)
+
+### Booking Confirmation
+Confirmation page with booking details and payment information
+![Booking Confirmation](screenshots/Booking_Confirmation.png)
+
+### Admin Package Management
+Administrative interface for managing tourism packages
+![Admin Packages](screenshots/Admin_Packages.png)
+
+### Package Creation
+Admin interface for creating new tourism packages
+![Package Create](screenshots/Package_Create.png)
+
+### User Management
+Admin dashboard for managing system users
+![Admin Users](screenshots/Admin_Users.png)
 
 ## Technology Stack
 
@@ -160,6 +195,7 @@ TourismManagementSystem/
 ?   ??? Models/                       # Entity models
 ?   ??? Migrations/                   # EF migrations
 ?   ??? TourismDbContext.cs          # Database context
+??? screenshots/                      # Application screenshots
 ??? README.md                        # This file
 ```
 
@@ -201,6 +237,7 @@ The application uses SQL Server with Entity Framework Core. Connection string is
 - XSS Protection - Output encoding
 - Authentication - ASP.NET Core Identity
 - Authorization - Role-based access control
+- User Data Isolation - Users can only access their own bookings
 
 ## Responsive Design
 
@@ -235,7 +272,7 @@ GET    /Package/Search             - Search packages
 ```
 GET    /Booking/Create/{id}        - Show booking form
 POST   /Booking/Create             - Create new booking
-GET    /Booking/History            - Get user booking history
+GET    /Booking/MyBookings         - Get user booking history
 GET    /Booking/Confirmation/{id}  - Show booking confirmation
 POST   /Booking/Cancel/{id}        - Cancel booking
 ```
@@ -248,6 +285,15 @@ GET    /Admin/Packages             - Manage packages
 GET    /Admin/BookingDetails/{id}  - View booking details
 POST   /Admin/UpdateBookingStatus  - Update booking status
 ```
+
+## Key Features Highlights
+
+- **15% Cancellation Fee** - Automated refund calculation with 15% deduction as per requirements
+- **Real-time Seat Availability** - Dynamic availability tracking
+- **Responsive Design** - Works seamlessly on all devices
+- **Admin Analytics** - Comprehensive dashboard with charts and statistics
+- **Secure Payments** - Payment processing with refund management
+- **User Role Management** - Separate interfaces for customers and administrators
 
 ## Deployment
 

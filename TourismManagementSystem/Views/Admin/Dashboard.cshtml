@@ -146,6 +146,7 @@
                 <th>Status</th>
                 <th>Payment</th>
                 <th>Amount</th>
+                <th>Refund</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -197,6 +198,19 @@
                         }
                     </td>
                     <td>₹@item.Amount</td>
+                    <td>
+                        @if (item.RefundAmount.HasValue)
+                        {
+                            <div>
+                                <strong class="text-warning">₹@item.RefundAmount.Value.ToString("N0")</strong><br>
+                                <small class="text-muted">Fee: ₹@item.CancellationFee.ToString("N0")</small>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
                     <td>
                         <a asp-action="BookingDetails" asp-route-id="@item.BookingId" 
                            class="btn btn-sm btn-outline-primary">

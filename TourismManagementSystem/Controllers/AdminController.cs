@@ -40,7 +40,9 @@ namespace TourismManagementSystem.Controllers
                         PaymentStatus = b.Payments.Any() ? 
                             b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
                         Amount = b.Payments.Any() ? 
-                            b.Payments.FirstOrDefault()!.Amount : 0
+                            b.Payments.FirstOrDefault()!.Amount : 0,
+                        RefundAmount = b.Payments.Any() ? 
+                            b.Payments.FirstOrDefault()!.RefundAmount : null
                     })
                     .OrderByDescending(b => b.BookingDate)
                     .ToListAsync();

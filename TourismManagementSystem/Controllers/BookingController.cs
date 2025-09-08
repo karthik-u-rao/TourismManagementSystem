@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tourism.DataAccess;
@@ -12,10 +13,12 @@ namespace TourismManagementSystem.Controllers
     public class BookingController : Controller
     {
         private readonly TourismDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingController(TourismDbContext context)
+        public BookingController(TourismDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Booking/Create
@@ -39,6 +42,11 @@ namespace TourismManagementSystem.Controllers
 
             System.Diagnostics.Debug.WriteLine($"Package found: {package.Name}");
 
+            // Get current user's email to pre-populate the form
+            var currentUser = await _userManager.GetUserAsync(User);
+            var userEmail = currentUser?.Email ?? string.Empty;
+            var userName = currentUser?.FullName ?? string.Empty;
+
             // Pass package info to view via ViewBag
             ViewBag.PackageId = package.PackageId;
             ViewBag.PackageName = package.Name;
@@ -53,8 +61,8 @@ namespace TourismManagementSystem.Controllers
                 BookingDate = DateTime.Now,
                 NumberOfSeats = 1,
                 Status = "Pending", // Initial status
-                CustomerName = string.Empty,
-                Email = string.Empty,
+                CustomerName = userName,
+                Email = userEmail,
                 PhoneNumber = string.Empty
             };
 
@@ -74,6 +82,14 @@ namespace TourismManagementSystem.Controllers
             System.Diagnostics.Debug.WriteLine($"Email: '{booking.Email}'");
             System.Diagnostics.Debug.WriteLine($"PhoneNumber: '{booking.PhoneNumber}'");
             System.Diagnostics.Debug.WriteLine($"NumberOfSeats: {booking.NumberOfSeats}");
+
+            // Get current user to associate with booking
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                TempData["Error"] = "User authentication failed. Please login again.";
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
 
             // Get package info first
             var package = await _context.Packages.FindAsync(booking.PackageId);
@@ -126,11 +142,11 @@ namespace TourismManagementSystem.Controllers
 
             try
             {
-                // Set booking details
+                // Set booking details and associate with current user
                 booking.BookingDate = DateTime.Now;
                 booking.Status = "Booked";
 
-                System.Diagnostics.Debug.WriteLine($"Attempting to save booking...");
+                System.Diagnostics.Debug.WriteLine($"Attempting to save booking for user: {currentUser.Email}");
 
                 // Save booking
                 _context.Bookings.Add(booking);
@@ -172,12 +188,27 @@ namespace TourismManagementSystem.Controllers
         // GET: /Booking/Confirmation/5
         public async Task<IActionResult> Confirmation(int id)
         {
+            // Get current user to verify ownership
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
+
             var booking = await _context.Bookings
                 .Include(b => b.Package)
                 .FirstOrDefaultAsync(b => b.BookingId == id);
 
             if (booking == null)
                 return NotFound();
+
+            // Security check: Only allow users to view their own booking confirmations
+            // For admin users, allow viewing all confirmations
+            if (!User.IsInRole("Admin") && booking.Email != currentUser.Email)
+            {
+                TempData["Error"] = "You can only view your own bookings.";
+                return RedirectToAction("MyBookings");
+            }
 
             var payment = await _context.Payments
                 .FirstOrDefaultAsync(p => p.BookingId == booking.BookingId);
@@ -206,40 +237,18 @@ namespace TourismManagementSystem.Controllers
         // GET: /Booking/History
         public async Task<IActionResult> History()
         {
+            // Get current user
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
+
+            // Filter bookings to show only current user's bookings
             var history = await _context.Bookings
                 .Include(b => b.Package)
                 .Include(b => b.Payments)
-                .Select(b => new BookingViewModel
-                {
-                    BookingId = b.BookingId,
-                    PackageId = b.PackageId,
-                    PackageName = b.Package.Name,
-                    Location = b.Package.Location,
-                    Price = b.Package.Price,
-                    NumberOfSeats = b.NumberOfSeats,
-                    BookingDate = b.BookingDate,
-                    Status = b.Status,
-                    CustomerName = b.CustomerName,
-                    Email = b.Email,
-                    PhoneNumber = b.PhoneNumber,
-                    PaymentStatus = b.Payments.FirstOrDefault() != null ? 
-                        b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
-                    Amount = b.Payments.FirstOrDefault() != null ? 
-                        b.Payments.FirstOrDefault()!.Amount : 0,
-                    ImageUrl = b.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
-                })
-                .ToListAsync();
-
-            return View(history);
-        }
-
-        // GET: /Booking/MyBookings
-        public async Task<IActionResult> MyBookings()
-        {
-            // Get bookings with package information and images
-            var myBookings = await _context.Bookings
-                .Include(b => b.Package)
-                .Include(b => b.Payments)
+                .Where(b => b.Email == currentUser.Email) // Filter by current user's email
                 .Select(b => new BookingViewModel
                 {
                     BookingId = b.BookingId,
@@ -262,6 +271,48 @@ namespace TourismManagementSystem.Controllers
                 .OrderByDescending(b => b.BookingDate)
                 .ToListAsync();
 
+            return View(history);
+        }
+
+        // GET: /Booking/MyBookings
+        public async Task<IActionResult> MyBookings()
+        {
+            // Get current user
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
+
+            // Get bookings with package information and images - FILTERED BY CURRENT USER
+            var myBookings = await _context.Bookings
+                .Include(b => b.Package)
+                .Include(b => b.Payments)
+                .Where(b => b.Email == currentUser.Email) // Filter by current user's email
+                .Select(b => new BookingViewModel
+                {
+                    BookingId = b.BookingId,
+                    PackageId = b.PackageId,
+                    PackageName = b.Package.Name,
+                    Location = b.Package.Location,
+                    Price = b.Package.Price,
+                    NumberOfSeats = b.NumberOfSeats,
+                    BookingDate = b.BookingDate,
+                    Status = b.Status,
+                    CustomerName = b.CustomerName,
+                    Email = b.Email,
+                    PhoneNumber = b.PhoneNumber,
+                    PaymentStatus = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
+                    Amount = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.Amount : 0,
+                    RefundAmount = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.RefundAmount : null,
+                    ImageUrl = b.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
+                })
+                .OrderByDescending(b => b.BookingDate)
+                .ToListAsync();
+
             return View(myBookings);
         }
 
@@ -269,12 +320,26 @@ namespace TourismManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
+            // Get current user to verify ownership
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
+
             var booking = await _context.Bookings
                 .Include(b => b.Package)
                 .FirstOrDefaultAsync(b => b.BookingId == id);
             
             if (booking == null) 
                 return NotFound();
+
+            // Security check: Only allow users to cancel their own bookings (unless admin)
+            if (!User.IsInRole("Admin") && booking.Email != currentUser.Email)
+            {
+                TempData["Error"] = "You can only cancel your own bookings.";
+                return RedirectToAction("MyBookings");
+            }
 
             if (booking.Status == "Cancelled")
             {
@@ -293,12 +358,19 @@ namespace TourismManagementSystem.Controllers
             if (payment != null && payment.PaymentStatus == "Success")
             {
                 var refundAmount = payment.Amount * 0.85m; // 15% deduction
+                var cancellationFee = payment.Amount * 0.15m;
+                
                 payment.PaymentStatus = "Refunded";
                 payment.RefundAmount = refundAmount;
+                
+                TempData["Success"] = $"Booking cancelled successfully! Refund Details: Original Amount: ₹{payment.Amount:N2}, Cancellation Fee: ₹{cancellationFee:N2}, Refund Amount: ₹{refundAmount:N2}. Refund will be processed within 5-7 business days.";
+            }
+            else
+            {
+                TempData["Success"] = "Booking cancelled successfully.";
             }
 
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Booking cancelled successfully. Refund processed with 15% deduction.";
             return RedirectToAction("MyBookings");
         }
 

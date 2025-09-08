@@ -39,5 +39,14 @@ namespace TourismManagementSystem.ViewModels
         // Payment Info
         public string PaymentStatus { get; set; } = string.Empty;
         public decimal Amount { get; set; }
+        
+        // Refund Info - NEW PROPERTIES
+        public decimal? RefundAmount { get; set; }
+        
+        // Calculated properties for display
+        public decimal CancellationFee => Amount * 0.15m;
+        public decimal RefundCalculated => Amount * 0.85m;
+        public bool IsRefunded => PaymentStatus == "Refunded";
+        public bool IsCancellable => Status == "Booked" && PaymentStatus == "Success";
     }
 }
