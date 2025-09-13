@@ -43,10 +43,30 @@
                             
                             <!-- Status Badge -->
                             <div class="position-absolute top-0 end-0 m-2">
-                                @if (booking.Status == "Booked")
+                                @if (booking.Status == "Booked" || booking.Status == "Confirmed")
                                 {
-                                    <span class="badge bg-success fs-6">
-                                        <i class="bi bi-check-circle"></i> Confirmed
+                                    @if (booking.PaymentStatus == "Success")
+                                    {
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="badge bg-success fs-6">
+                                                <i class="bi bi-check-circle"></i> Confirmed
+                                            </span>
+                                            <span class="badge bg-info fs-7">
+                                                <i class="bi bi-receipt"></i> Receipt Ready
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success fs-6">
+                                            <i class="bi bi-check-circle"></i> Confirmed
+                                        </span>
+                                    }
+                                }
+                                else if (booking.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark fs-6">
+                                        <i class="bi bi-clock"></i> Pending Payment
                                     </span>
                                 }
                                 else if (booking.Status == "Cancelled")
@@ -99,6 +119,11 @@
                                     <span class="badge bg-success ms-1">
                                         <i class="bi bi-credit-card"></i> Paid
                                     </span>
+                                    <div class="mt-2">
+                                        <small class="text-success">
+                                            <i class="bi bi-check-circle"></i> Receipt available for download
+                                        </small>
+                                    </div>
                                 }
                                 else if (booking.PaymentStatus == "Refunded")
                                 {
@@ -156,14 +181,47 @@
                             <!-- Actions -->
                             <div class="mt-auto">
                                 <div class="d-grid gap-2">
+                                    <!-- View Package Button -->
                                     <a asp-controller="Package" asp-action="Details" asp-route-id="@booking.PackageId" 
                                        class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-eye"></i> View Package
+                                        <i class="bi bi-eye"></i> View Package Details
                                     </a>
                                     
-                                    @if (booking.Status == "Booked")
+                                    <!-- Payment Actions -->
+                                    @if (booking.PaymentStatus == "Pending" || booking.PaymentStatus == "Failed" || booking.PaymentStatus == "Cancelled")
                                     {
-                                        <button type="button" class="btn btn-outline-danger btn-sm w-100" 
+                                        <a asp-controller="Payment" asp-action="Checkout" asp-route-bookingId="@booking.BookingId" 
+                                           class="btn btn-success btn-sm">
+                                            <i class="bi bi-credit-card"></i> Complete Payment
+                                        </a>
+                                    }
+                                    
+                                    <!-- Receipt Actions for Successful Payments -->
+                                    @if (booking.PaymentStatus == "Success" && booking.PaymentId.HasValue)
+                                    {
+                                        <div class="card bg-light receipt-card">
+                                            <div class="card-body p-2">
+                                                <h6 class="card-title mb-2 text-success">
+                                                    <i class="bi bi-receipt"></i> Download Receipts
+                                                </h6>
+                                                <div class="btn-group-vertical w-100 gap-1" role="group">
+                                                    <a asp-controller="Payment" asp-action="Receipt" asp-route-id="@booking.PaymentId" 
+                                                       class="btn btn-outline-info btn-sm">
+                                                        <i class="bi bi-file-text"></i> View Internal Receipt
+                                                    </a>
+                                                    <button onclick="downloadStripeReceiptFromBooking(@booking.PaymentId)" 
+                                                            class="btn btn-success btn-sm stripe-receipt-btn">
+                                                        <i class="bi bi-download"></i> Download Stripe Receipt
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                    <!-- Cancellation Button -->
+                                    @if (booking.Status == "Booked" || booking.Status == "Confirmed")
+                                    {
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
                                                 onclick="showCancellationModal(@booking.BookingId, @booking.Amount, @booking.RefundCalculated, @booking.CancellationFee)">
                                             <i class="bi bi-x-circle"></i> Cancel Booking
                                         </button>
@@ -196,16 +254,16 @@
                                 <small class="text-muted">Total Bookings</small>
                             </div>
                             <div class="col-md-3">
-                                <h4 class="text-success">@Model.Count(b => b.Status == "Booked")</h4>
-                                <small class="text-muted">Active</small>
+                                <h4 class="text-success">@Model.Count(b => b.Status == "Booked" || b.Status == "Confirmed")</h4>
+                                <small class="text-muted">Confirmed</small>
                             </div>
                             <div class="col-md-3">
-                                <h4 class="text-warning">@Model.Count(b => b.Status == "Cancelled")</h4>
+                                <h4 class="text-warning">@Model.Count(b => b.Status == "Pending")</h4>
+                                <small class="text-muted">Pending Payment</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h4 class="text-danger">@Model.Count(b => b.Status == "Cancelled")</h4>
                                 <small class="text-muted">Cancelled</small>
-                            </div>
-                            <div class="col-md-3">
-                                <h4 class="text-info">@Model.Sum(b => b.NumberOfSeats)</h4>
-                                <small class="text-muted">Total Seats</small>
                             </div>
                         </div>
 
@@ -301,6 +359,23 @@
     .badge {
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    
+    .stripe-receipt-btn {
+        background: linear-gradient(45deg, #635bff, #4f46e5);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .stripe-receipt-btn:hover {
+        background: linear-gradient(45deg, #4f46e5, #3730a3);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+    }
+    
+    .receipt-card {
+        border-left: 4px solid #198754;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
 </style>
 
 @section Scripts {
@@ -317,6 +392,79 @@
             // Show modal
             var modal = new bootstrap.Modal(document.getElementById('cancellationModal'));
             modal.show();
+        }
+
+        function downloadStripeReceiptFromBooking(paymentId) {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            const originalClass = button.className;
+            button.disabled = true;
+            button.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Loading...';
+            button.className = 'btn btn-secondary btn-sm';
+            
+            // Get the receipt URL via AJAX
+            fetch(`/Payment/GetStripeReceiptUrl/${paymentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success feedback
+                        button.innerHTML = '<i class="bi bi-check-circle me-1"></i>Opening...';
+                        button.className = 'btn btn-success btn-sm';
+                        
+                        // Open Stripe receipt in new tab
+                        window.open(data.receiptUrl, '_blank');
+                        
+                        // Show toast notification
+                        showToast('Receipt opened successfully!', 'success');
+                        
+                        // Restore button after delay
+                        setTimeout(() => {
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                            button.className = originalClass;
+                        }, 2000);
+                    } else {
+                        showToast('Error: ' + (data.error || 'Could not retrieve Stripe receipt'), 'error');
+                        throw new Error(data.error || 'Could not retrieve receipt');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error downloading receipt. Please try again.', 'error');
+                    
+                    // Restore button state immediately on error
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                    button.className = originalClass;
+                });
+        }
+
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast-notification alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            
+            const icon = type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+            
+            toast.innerHTML = `
+                <i class="bi ${icon}"></i> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
         }
     </script>
 }

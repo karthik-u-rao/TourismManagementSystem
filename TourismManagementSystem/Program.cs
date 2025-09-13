@@ -5,6 +5,7 @@ using Tourism.DataAccess;
 using Tourism.DataAccess.Models;
 using TourismManagementSystem.Data;
 using TourismManagementSystem.Services;
+using Stripe;
 
 namespace TourismManagementSystem
 {
@@ -36,6 +37,9 @@ namespace TourismManagementSystem
             // Register custom services
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddScoped<IPackageValidationService, PackageValidationService>();
+
+            // Configure Stripe
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

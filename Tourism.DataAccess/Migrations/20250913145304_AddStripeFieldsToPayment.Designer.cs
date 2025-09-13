@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.DataAccess;
 
@@ -11,9 +12,11 @@ using Tourism.DataAccess;
 namespace Tourism.DataAccess.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    partial class TourismDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250913145304_AddStripeFieldsToPayment")]
+    partial class AddStripeFieldsToPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,21 +352,9 @@ namespace Tourism.DataAccess.Migrations
                     b.Property<decimal?>("RefundAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("StripeCustomerId")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("StripeInvoiceId")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("StripePaymentIntentId")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("StripeReceiptUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("StripeSessionId")
                         .HasMaxLength(255)

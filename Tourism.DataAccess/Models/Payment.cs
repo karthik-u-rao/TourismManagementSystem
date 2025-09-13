@@ -27,5 +27,25 @@ namespace Tourism.DataAccess.Models
         // NEW FIELD for cancelled/refund tracking
         [Column(TypeName = "decimal(18,2)")]
         public decimal? RefundAmount { get; set; }
+
+        // Stripe-specific fields
+        [MaxLength(255)]
+        public string? StripePaymentIntentId { get; set; }
+
+        [MaxLength(255)]
+        public string? StripeSessionId { get; set; }
+
+        [MaxLength(50)]
+        public string? PaymentMethod { get; set; } = "Stripe"; // Stripe, Cash, etc.
+
+        // Stripe invoice fields
+        [MaxLength(255)]
+        public string? StripeInvoiceId { get; set; }
+
+        [MaxLength(255)]
+        public string? StripeCustomerId { get; set; }
+
+        [MaxLength(500)]
+        public string? StripeReceiptUrl { get; set; }
     }
 }

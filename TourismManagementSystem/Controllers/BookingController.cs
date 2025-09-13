@@ -144,36 +144,20 @@ namespace TourismManagementSystem.Controllers
             {
                 // Set booking details and associate with current user
                 booking.BookingDate = DateTime.Now;
-                booking.Status = "Booked";
+                booking.Status = "Pending"; // Changed from "Booked" to "Pending" until payment
 
                 System.Diagnostics.Debug.WriteLine($"Attempting to save booking for user: {currentUser.Email}");
 
-                // Save booking
+                // Save booking first (but don't update seats yet - wait for payment)
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
                 System.Diagnostics.Debug.WriteLine($"Booking saved with ID: {booking.BookingId}");
 
-                // Update available seats
-                package.AvailableSeats -= booking.NumberOfSeats;
-                _context.Packages.Update(package);
-
-                // Create payment record
-                var payment = new Payment
-                {
-                    BookingId = booking.BookingId,
-                    Amount = booking.NumberOfSeats * package.Price,
-                    PaymentDate = DateTime.Now,
-                    PaymentStatus = "Success"
-                };
-
-                _context.Payments.Add(payment);
-                await _context.SaveChangesAsync();
-
-                System.Diagnostics.Debug.WriteLine($"Payment created successfully");
-
-                TempData["Success"] = $"Booking confirmed! Your booking ID is #{booking.BookingId}";
-                return RedirectToAction(nameof(Confirmation), new { id = booking.BookingId });
+                TempData["Success"] = $"Booking created! Your booking ID is #{booking.BookingId}. Please complete payment to confirm your booking.";
+                
+                // Redirect to payment instead of automatically confirming
+                return RedirectToAction("Checkout", "Payment", new { bookingId = booking.BookingId });
             }
             catch (Exception ex)
             {
@@ -197,6 +181,7 @@ namespace TourismManagementSystem.Controllers
 
             var booking = await _context.Bookings
                 .Include(b => b.Package)
+                .Include(b => b.Payments)
                 .FirstOrDefaultAsync(b => b.BookingId == id);
 
             if (booking == null)
@@ -213,6 +198,13 @@ namespace TourismManagementSystem.Controllers
             var payment = await _context.Payments
                 .FirstOrDefaultAsync(p => p.BookingId == booking.BookingId);
 
+            // If payment is not successful, redirect to payment page
+            if (payment == null || payment.PaymentStatus != "Success")
+            {
+                TempData["Warning"] = "Payment is required to confirm your booking.";
+                return RedirectToAction("Checkout", "Payment", new { bookingId = booking.BookingId });
+            }
+
             var viewModel = new BookingViewModel
             {
                 BookingId = booking.BookingId,
@@ -226,6 +218,7 @@ namespace TourismManagementSystem.Controllers
                 CustomerName = booking.CustomerName,
                 Email = booking.Email,
                 PhoneNumber = booking.PhoneNumber,
+                PaymentId = payment?.PaymentId,
                 PaymentStatus = payment?.PaymentStatus ?? "Not Paid",
                 Amount = payment?.Amount ?? 0,
                 ImageUrl = booking.Package.ImageUrl ?? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
@@ -262,6 +255,8 @@ namespace TourismManagementSystem.Controllers
                     CustomerName = b.CustomerName,
                     Email = b.Email,
                     PhoneNumber = b.PhoneNumber,
+                    PaymentId = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.PaymentId : (int?)null,
                     PaymentStatus = b.Payments.FirstOrDefault() != null ? 
                         b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
                     Amount = b.Payments.FirstOrDefault() != null ? 
@@ -302,6 +297,8 @@ namespace TourismManagementSystem.Controllers
                     CustomerName = b.CustomerName,
                     Email = b.Email,
                     PhoneNumber = b.PhoneNumber,
+                    PaymentId = b.Payments.FirstOrDefault() != null ? 
+                        b.Payments.FirstOrDefault()!.PaymentId : (int?)null,
                     PaymentStatus = b.Payments.FirstOrDefault() != null ? 
                         b.Payments.FirstOrDefault()!.PaymentStatus : "Not Paid",
                     Amount = b.Payments.FirstOrDefault() != null ? 
