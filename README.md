@@ -1,6 +1,6 @@
 ﻿# Tourism Management System
 
-A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework Core for managing tourism packages, bookings, and customer relationships.
+A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework Core for managing tourism packages, bookings, and secure payment processing with Stripe integration.
 
 ## Table of Contents
 
@@ -10,11 +10,12 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Database Setup](#database-setup)
+- [Stripe Payment Setup](#stripe-payment-setup)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
 - [Security Features](#security-features)
-- [Contributing](#contributing)
+- [API Endpoints](#api-endpoints)
 - [License](#license)
 
 ## Features
@@ -22,281 +23,311 @@ A comprehensive web application built with ASP.NET Core 8.0 and Entity Framework
 ### User Management
 - User Registration and Authentication with ASP.NET Core Identity
 - Role-based Access Control (Admin/Customer roles)
-- Secure Login/Logout functionality
+- Profile management with secure login/logout functionality
+- Email-based user identification
 
 ### Package Management
-- CRUD Operations for tourism packages
-- Package Search and Filtering by location, price, and dates
+- Complete CRUD operations for tourism packages
+- Package search and filtering by location, price, and dates
 - Image URL support for package galleries
-- Availability Tracking with seat management
-- Duration Calculation for multi-day packages
+- Real-time availability tracking with seat management
+- Dynamic pricing and duration management
 
 ### Booking System
-- Real-time Booking with seat availability checks
-- Booking History for customers
-- Booking Status Management (Pending, Booked, Cancelled)
-- Cancellation with Refund Processing (15% deduction)
+- Real-time booking with instant seat availability checks
+- Comprehensive booking history for customers
+- Multi-status booking management (Pending, Confirmed, Cancelled)
+- Smart cancellation system with 15% processing fee
+- Automated seat restoration on cancellations
 
-### Payment Processing
-- Payment simulation for demonstration purposes
-- Payment History Tracking
-- Refund Management with automated calculations
-- Receipt Generation
+### Stripe Payment Processing
+- **Secure Stripe Checkout Integration** - Industry-standard payment processing
+- **Real-time Payment Validation** - Instant payment confirmation and status updates
+- **Multiple Receipt Options** - Both internal receipts and Stripe invoices
+- **Automated Refund Processing** - Handles cancellations with fee deduction
+- **Payment History Tracking** - Complete transaction audit trail
+- **Test Mode Support** - Safe testing environment with Stripe test cards
+- **PCI Compliance** - Zero sensitive payment data storage
+- **Multi-format Receipts** - PDF downloads and hosted invoice URLs
+- **Payment Status Management** - Real-time status tracking and updates
 
 ### Admin Dashboard
-- Analytics with charts and statistics
-- User Management interface
-- Package Performance Tracking
-- Revenue and Booking Analytics
-- Data Visualization with Chart.js
+- Comprehensive analytics with interactive charts
+- User management interface with role assignment
+- Package performance tracking and analytics
+- Revenue analysis and booking statistics
+- Payment transaction monitoring and management
 
 ### Modern UI/UX
-- Responsive Design with Bootstrap 5
-- Interactive Components with smooth animations
-- Mobile-Friendly interface
-- Clean and modern design elements
+- Fully responsive design with Bootstrap 5
+- Interactive components with smooth animations
+- Mobile-first approach for all devices
+- Professional payment interfaces with Stripe branding
+- Enhanced currency symbol support (₹) for Indian market
 
 ## Screenshots
 
 ### Home Page
-The landing page with hero section and featured packages
+Landing page with hero section and featured tourism packages
 ![Homepage](Screenshots/homepage.png)
 
 ### Package Listings
-Browse all available tourism packages with search and filter options
+Browse available tourism packages with advanced search and filtering
 ![Package Listings](Screenshots/Package.png)
 
 ### Package Details
-Detailed view of individual packages with booking options
+Detailed view of packages with booking options and availability
 ![Package Details](Screenshots/Package_Details.png)
 
 ### Booking System
-Easy-to-use booking form with real-time pricing calculations
+Intuitive booking form with real-time pricing and validation
 ![Booking Create](Screenshots/Booking_Create.png)
 
+### Payment Checkout
+Secure payment page with Stripe integration and currency support
+![Payment Checkout](Screenshots/Payment_Checkout.png)
+
+### Stripe Payment Processing
+Stripe's hosted checkout page for secure card processing
+![Stripe Checkout](Screenshots/Stripe_Checkout.png)
+
 ### Booking Confirmation
-Confirmation page with booking details and payment information
+Confirmation page with booking details and receipt access
 ![Booking Confirmation](Screenshots/Booking_Confirmation.png)
+
+### Payment Receipt
+Professional payment receipt with Stripe invoice download
+![Payment Receipt](Screenshots/Payment_Receipt.png)
+
+### My Bookings with Payment Status
+User dashboard showing booking history and payment status
+![My Bookings](Screenshots/My_Bookings_Payment.png)
 
 ### Admin Package Management
 Administrative interface for managing tourism packages
 ![Admin Packages](Screenshots/Admin_Packages.png)
 
 ### Package Creation
-Admin interface for creating new tourism packages
+Admin form for creating new tourism packages
 ![Package Create](Screenshots/Package_Create.png)
 
 ### User Management
-Admin dashboard for managing system users
+Admin interface for managing system users and roles
 ![Admin Users](Screenshots/Admin_Users.png)
+
+### Admin Payment Management
+Administrative view of payment transactions and management
+![Admin Payments](Screenshots/Admin_Payments.png)
 
 ## Technology Stack
 
 ### Backend
-- ASP.NET Core 8.0 - Web framework
-- Entity Framework Core 8.0 - ORM
-- ASP.NET Core Identity - Authentication and Authorization
-- SQL Server - Database
+- **ASP.NET Core 8.0** - Modern web framework
+- **Entity Framework Core 8.0** - Object-relational mapping
+- **ASP.NET Core Identity** - Authentication and authorization
+- **SQL Server** - Primary database
+- **Stripe.net SDK** - Payment processing integration
 
 ### Frontend
-- Razor Pages - Server-side rendering
-- Bootstrap 5 - CSS framework
-- jQuery - JavaScript library
-- Chart.js - Data visualization
-- Bootstrap Icons - Icon library
+- **Razor Pages** - Server-side rendering
+- **Bootstrap 5** - Responsive CSS framework
+- **jQuery** - JavaScript functionality
+- **Chart.js** - Data visualization
+- **Bootstrap Icons** - Icon library
+- **Stripe.js** - Client-side payment processing
 
-### Tools and Services
-- Visual Studio 2022 - IDE
-- SQL Server Management Studio - Database management
-- Git - Version control
-- Entity Framework Migrations - Database versioning
+### Payment Infrastructure
+- **Stripe** - Payment processor
+- **Stripe Checkout** - Hosted payment pages
+- **Stripe Invoicing** - Receipt and invoice generation
+- **Webhook Integration** - Real-time payment notifications
+
+### Development Tools
+- **Visual Studio 2022** - Primary IDE
+- **Entity Framework Migrations** - Database versioning
+- **Git** - Version control
+- **SQL Server Management Studio** - Database administration
 
 ## Getting Started
 
 ### Prerequisites
 
-Before running this application, make sure you have the following installed:
-
-- .NET 8.0 SDK
-- SQL Server (LocalDB is sufficient)
-- Visual Studio 2022 or Visual Studio Code
-- Git
+- **.NET 8.0 SDK** or later
+- **SQL Server** (LocalDB supported)
+- **Visual Studio 2022** or VS Code
+- **Git** for version control
+- **Stripe Account** (free tier available)
 
 ### Installation
 
-1. Clone the repository
+1. **Clone the repository**
    ```bash
    git clone https://github.com/karthik-u-rao/TourismManagementSystem.git
    cd TourismManagementSystem
    ```
 
-2. Restore NuGet packages
+2. **Restore dependencies**
    ```bash
    dotnet restore
    ```
 
-3. Update appsettings.json
+3. **Configure application settings**
    ```json
    {
      "ConnectionStrings": {
        "TourismDb": "Server=(localdb)\\MSSQLLocalDB;Database=TourismDb;Trusted_Connection=True;MultipleActiveResultSets=true;"
+     },
+     "Stripe": {
+       "PublishableKey": "pk_test_your_stripe_publishable_key",
+       "SecretKey": "sk_test_your_stripe_secret_key"
      }
    }
    ```
 
 ## Database Setup
 
-1. Apply database migrations
+1. **Apply database migrations**
    ```bash
    dotnet ef database update --project Tourism.DataAccess --startup-project TourismManagementSystem
    ```
 
-2. Seed initial data
-   The application automatically seeds:
-   - Admin user (Email: karthik@tourism.com, Password: Karthik@123)
+2. **Automatic data seeding includes:**
+   - Default admin user (Email: karthik@tourism.com, Password: Karthik@123)
    - Sample tourism packages
-   - Default roles (Admin, Customer)
+   - User roles (Admin, Customer)
+   - Demo payment records
+
+## Stripe Payment Setup
+
+### Quick Setup Process
+
+1. **Create Stripe Account** at [stripe.com](https://stripe.com)
+2. **Get Test API Keys** from Stripe Dashboard → Developers → API keys
+3. **Update Configuration** in `appsettings.json`
+4. **Test with Cards:**
+   - Success: `4242 4242 4242 4242`
+   - Decline: `4000 0000 0000 0002`
+   - Insufficient Funds: `4000 0000 0000 9995`
+
+**📖 Complete setup guide:** [STRIPE_SETUP.md](STRIPE_SETUP.md)
 
 ## Usage
 
-1. Run the application
+1. **Start the application**
    ```bash
    dotnet run --project TourismManagementSystem
    ```
 
-2. Access the application
-   - Open your browser and navigate to https://localhost:5211
-   - Register as a new customer or login as admin
+2. **Access the system**
+   - URL: `https://localhost:5211`
+   - Admin login: karthik@tourism.com / Karthik@123
+   - Or register as new customer
 
-3. Admin Login
-   - Email: karthik@tourism.com
-   - Password: Karthik@123
+3. **Test payment flow**
+   - Create booking → Proceed to payment → Use test card → Confirm booking
 
 ## Project Structure
 
 ```
 TourismManagementSystem/
 ├── TourismManagementSystem/          # Main web application
-│   ├── Controllers/                  # MVC Controllers
-│   ├── Views/                        # Razor Views
-│   │   ├── Home/                     # Homepage views
-│   │   ├── Package/                  # Package management views
-│   │   ├── Booking/                  # Booking views
-│   │   ├── Admin/                    # Admin panel views
-│   │   ├── Payment/                  # Payment views
-│   │   └── Shared/                   # Shared layouts
-│   ├── Areas/Identity/               # Identity UI
-│   ├── Services/                     # Business logic services
-│   ├── ViewModels/                   # View models
-│   ├── Data/                         # Data seeding
-│   ├── wwwroot/                      # Static files
-│   └── Program.cs                    # Application entry point
+│   ├── Controllers/                  # Application controllers
+│   │   ├── PaymentController.cs      # Stripe payment processing
+│   │   ├── BookingController.cs      # Booking management
+│   │   ├── AdminController.cs        # Administrative functions
+│   │   └── PackageController.cs      # Package operations
+│   ├── Views/                        # Razor view templates
+│   │   ├── Payment/                  # Payment-related views
+│   │   ├── Booking/                  # Booking management views
+│   │   ├── Admin/                    # Administrative interfaces
+│   │   └── Shared/                   # Shared layouts and components
+│   ├── ViewModels/                   # Data transfer objects
+│   ├── Helpers/                      # Utility classes (Currency formatting)
+│   ├── Areas/Identity/               # ASP.NET Core Identity UI
+│   ├── wwwroot/                      # Static assets
+│   └── Program.cs                    # Application configuration
 ├── Tourism.DataAccess/               # Data access layer
-│   ├── Models/                       # Entity models
-│   ├── Migrations/                   # EF migrations
+│   ├── Models/                       # Entity framework models
+│   ├── Migrations/                   # Database migrations
 │   └── TourismDbContext.cs          # Database context
 ├── Screenshots/                      # Application screenshots
-└── README.md                        # This file
+├── STRIPE_SETUP.md                  # Payment setup documentation
+└── README.md                        # Project documentation
 ```
-
-## Key Components
-
-### Controllers
-- HomeController - Landing page and general pages
-- PackageController - Package management operations
-- BookingController - Booking operations
-- AdminController - Administrative functions
-- PaymentController - Payment processing
-
-### Models
-- Package - Tourism package entity
-- Booking - Customer booking entity
-- Payment - Payment transaction entity
-- ApplicationUser - Extended user entity
-
-### Services
-- PackageValidationService - Business logic for package validation
-- EmailSender - Email service implementation
 
 ## Configuration
 
 ### Environment Variables
-```bash
-ASPNETCORE_ENVIRONMENT=Development
-ConnectionStrings__TourismDb=YourConnectionString
-```
+- `ASPNETCORE_ENVIRONMENT`: Development/Production
+- `ConnectionStrings__TourismDb`: Database connection string
+- `Stripe__PublishableKey`: Stripe public API key
+- `Stripe__SecretKey`: Stripe secret API key
 
-### Database Configuration
-The application uses SQL Server with Entity Framework Core. Connection string is configured in appsettings.json.
+### Key Configuration Files
+- `appsettings.json`: Application configuration
+- `Program.cs`: Startup configuration with Stripe and localization setup
 
 ## Security Features
 
-- Input Validation - Server and client-side validation
-- CSRF Protection - Anti-forgery tokens
-- SQL Injection Prevention - Parameterized queries
-- XSS Protection - Output encoding
-- Authentication - ASP.NET Core Identity
-- Authorization - Role-based access control
-- User Data Isolation - Users can only access their own bookings
-
-## Database Schema
-
-### Main Tables
-- AspNetUsers - User accounts
-- AspNetRoles - User roles
-- Packages - Tourism packages
-- Bookings - Customer bookings
-- Payments - Payment records
+- **Authentication & Authorization**: ASP.NET Core Identity with role-based access
+- **Input Validation**: Comprehensive server and client-side validation
+- **CSRF Protection**: Anti-forgery tokens on all forms
+- **SQL Injection Prevention**: Entity Framework parameterized queries
+- **XSS Protection**: Automatic output encoding
+- **PCI Compliance**: Payment processing handled entirely by Stripe
+- **Data Isolation**: Users can only access their own bookings
+- **Secure Communication**: HTTPS enforcement for all payment operations
 
 ## API Endpoints
 
-### Package Management
+### Core Functionality
 ```
-GET    /Package                    - Get all packages
-GET    /Package/Details/{id}       - Get package details
-POST   /Package/Create             - Create new package (Admin)
-PUT    /Package/Edit/{id}          - Update package (Admin)
-DELETE /Package/Delete/{id}        - Delete package (Admin)
-GET    /Package/Search             - Search packages
+GET/POST /Package/*              - Package management operations
+GET/POST /Booking/*              - Booking management operations  
+GET/POST /Admin/*                - Administrative functions
 ```
 
-### Booking Management
+### Payment Processing
 ```
-GET    /Booking/Create/{id}        - Show booking form
-POST   /Booking/Create             - Create new booking
-GET    /Booking/MyBookings         - Get user booking history
-GET    /Booking/Confirmation/{id}  - Show booking confirmation
-POST   /Booking/Cancel/{id}        - Cancel booking
-```
-
-### Admin Operations
-```
-GET    /Admin/Dashboard            - Admin dashboard
-GET    /Admin/Users                - Manage users
-GET    /Admin/Packages             - Manage packages
-GET    /Admin/BookingDetails/{id}  - View booking details
-POST   /Admin/UpdateBookingStatus  - Update booking status
+GET    /Payment/Checkout/{id}           - Payment checkout page
+POST   /Payment/CreateCheckoutSession   - Initialize Stripe session
+GET    /Payment/Success                 - Payment success handling
+GET    /Payment/Receipt/{id}            - Payment receipt display
+GET    /Payment/DownloadStripeReceipt/{id} - Stripe receipt download
 ```
 
-## Key Features Highlights
+## Key Features
 
-- **15% Cancellation Fee** - Automated refund calculation with 15% deduction as per requirements
-- **Real-time Seat Availability** - Dynamic availability tracking
-- **Responsive Design** - Works seamlessly on all devices
-- **Admin Analytics** - Comprehensive dashboard with charts and statistics
-- **Secure Payments** - Payment processing with refund management
-- **User Role Management** - Separate interfaces for customers and administrators
+- **Complete Tourism Package Management** with real-time availability
+- **Secure Payment Processing** with Stripe integration
+- **Multi-format Receipt System** (internal + Stripe invoices)
+- **Automated Refund Processing** with 15% cancellation fee
+- **Responsive Multi-device Support** with mobile-first design
+- **Comprehensive Admin Dashboard** with analytics and reporting
+- **Role-based Security Model** for customers and administrators
+- **Real-time Booking Management** with instant confirmations
+
+## Testing
+
+### Payment Testing with Stripe Test Cards
+- **Successful Payment**: `4242 4242 4242 4242`
+- **Card Declined**: `4000 0000 0000 0002`
+- **Insufficient Funds**: `4000 0000 0000 9995`
+- **Expiry**: Any future date (e.g., 12/25)
+- **CVC**: Any 3 digits (e.g., 123)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## Author
 
-Karthik U Rao
+**Karthik U Rao**  
+Tourism Management System with Stripe Payment Integration
 
 ## Acknowledgments
 
-- ASP.NET Core team for the excellent framework
-- Bootstrap team for the responsive CSS framework
-- Chart.js for data visualizations
+- ASP.NET Core team for the robust framework
+- Stripe for providing secure payment infrastructure
+- Bootstrap team for the responsive design framework
+- Chart.js for data visualization capabilities

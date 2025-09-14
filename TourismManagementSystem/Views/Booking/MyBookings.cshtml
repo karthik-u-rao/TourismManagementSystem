@@ -150,7 +150,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="text-success fw-bold mb-0">
-                                            <i class="bi bi-currency-rupee"></i>@booking.Amount.ToString("N0")
+                                            <span class="currency-symbol">&#8377;@booking.Amount.ToString("N0")</span>
                                         </h5>
                                         <small class="text-muted">Original Amount</small>
                                     </div>
@@ -159,7 +159,7 @@
                                     {
                                         <div class="text-end">
                                             <h6 class="text-warning fw-bold mb-0">
-                                                <i class="bi bi-arrow-return-left"></i>₹@booking.RefundAmount.Value.ToString("N0")
+                                                <i class="bi bi-arrow-return-left"></i><span class="currency-symbol">&#8377;@booking.RefundAmount.Value.ToString("N0")</span>
                                             </h6>
                                             <small class="text-muted">Refunded</small>
                                         </div>
@@ -171,8 +171,8 @@
                                     <div class="mt-2 p-2 bg-light rounded">
                                         <small class="text-muted">
                                             <strong>Refund Details:</strong><br>
-                                            Refund Amount: ₹@booking.RefundAmount.Value.ToString("N2")<br>
-                                            Cancellation Fee: ₹@booking.CancellationFee.ToString("N2") (15%)
+                                            Refund Amount: <span class="currency-symbol">&#8377;@booking.RefundAmount.Value.ToString("N2")</span><br>
+                                            Cancellation Fee: <span class="currency-symbol">&#8377;@booking.CancellationFee.ToString("N2")</span> (15%)
                                         </small>
                                     </div>
                                 }
@@ -272,11 +272,11 @@
                             <hr>
                             <div class="row text-center">
                                 <div class="col-md-6">
-                                    <h5 class="text-warning">₹@Model.Where(b => b.RefundAmount.HasValue).Sum(b => b.RefundAmount.Value).ToString("N0")</h5>
+                                    <h5 class="text-warning"><span class="currency-symbol">&#8377;@Model.Where(b => b.RefundAmount.HasValue).Sum(b => b.RefundAmount.Value).ToString("N0")</span></h5>
                                     <small class="text-muted">Total Refunds Received</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <h5 class="text-danger">₹@Model.Where(b => b.IsRefunded).Sum(b => b.CancellationFee).ToString("N0")</h5>
+                                    <h5 class="text-danger"><span class="currency-symbol">&#8377;@Model.Where(b => b.IsRefunded).Sum(b => b.CancellationFee).ToString("N0")</span></h5>
                                     <small class="text-muted">Total Cancellation Fees</small>
                                 </div>
                             </div>
@@ -307,15 +307,15 @@
                 <table class="table table-sm">
                     <tr>
                         <td><strong>Original Amount:</strong></td>
-                        <td class="text-end">₹<span id="modalOriginalAmount">0</span></td>
+                        <td class="text-end"><span class="currency-symbol">&#8377;<span id="modalOriginalAmount">0</span></span></td>
                     </tr>
                     <tr class="text-danger">
                         <td><strong>Cancellation Fee (15%):</strong></td>
-                        <td class="text-end">-₹<span id="modalCancellationFee">0</span></td>
+                        <td class="text-end">-<span class="currency-symbol">&#8377;<span id="modalCancellationFee">0</span></span></td>
                     </tr>
                     <tr class="table-success">
                         <td><strong>Refund Amount:</strong></td>
-                        <td class="text-end"><strong>₹<span id="modalRefundAmount">0</span></strong></td>
+                        <td class="text-end"><strong><span class="currency-symbol">&#8377;<span id="modalRefundAmount">0</span></span></strong></td>
                     </tr>
                 </table>
                 

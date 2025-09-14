@@ -6,6 +6,7 @@ using Tourism.DataAccess.Models;
 using TourismManagementSystem.Data;
 using TourismManagementSystem.Services;
 using Stripe;
+using System.Globalization;
 
 namespace TourismManagementSystem
 {
@@ -14,6 +15,15 @@ namespace TourismManagementSystem
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Configure localization and culture
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[] { "en-IN" }; // Indian English
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-IN");
+                options.SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+                options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+            });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -52,6 +62,9 @@ namespace TourismManagementSystem
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Use request localization
+            app.UseRequestLocalization();
 
             app.UseRouting();
 

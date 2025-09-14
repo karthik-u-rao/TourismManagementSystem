@@ -36,7 +36,7 @@
                                 <strong>Seats:</strong> @Model.NumberOfSeats
                             </p>
                             <p class="mb-1">
-                                <strong>Price per seat:</strong> ?@Model.PricePerSeat.ToString("N2")
+                                <strong>Price per seat:</strong> <span class="currency-symbol">&#8377;@Model.PricePerSeat.ToString("N2")</span>
                             </p>
                         </div>
                     </div>
@@ -47,16 +47,16 @@
                             <h6 class="card-title fw-bold">Payment Summary</h6>
                             <div class="d-flex justify-content-between">
                                 <span>Subtotal (@Model.NumberOfSeats seat(s)):</span>
-                                <span>?@Model.TotalAmount.ToString("N2")</span>
+                                <span class="currency-symbol">&#8377;@Model.TotalAmount.ToString("N2")</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span>Taxes & Fees:</span>
-                                <span>?0.00</span>
+                                <span class="currency-symbol">&#8377;0.00</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between fw-bold h5">
                                 <span>Total Amount:</span>
-                                <span class="text-success">?@Model.TotalAmount.ToString("N2")</span>
+                                <span class="text-success currency-symbol">&#8377;@Model.TotalAmount.ToString("N2")</span>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         <!-- Stripe Payment Button -->
                         <div class="d-grid gap-2">
                             <button id="checkout-button" class="btn btn-success btn-lg">
-                                <i class="bi bi-credit-card"></i> Pay ?@Model.TotalAmount.ToString("N2") with Card
+                                <i class="bi bi-credit-card"></i> Pay <span class="currency-symbol">&#8377;@Model.TotalAmount.ToString("N2")</span> with Card
                             </button>
                             <a href="@Url.Action("MyBookings", "Booking")" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left"></i> Back to My Bookings
@@ -143,10 +143,10 @@
             console.error('Payment error:', error);
             alert('Payment initialization failed: ' + error.message);
             
-            // Re-enable the button
+            // Re-enable the button with correct symbol
             const button = document.getElementById('checkout-button');
             button.disabled = false;
-            button.innerHTML = '<i class="bi bi-credit-card"></i> Pay ?@Model.TotalAmount.ToString("N2") with Card';
+            button.innerHTML = '<i class="bi bi-credit-card"></i> Pay <span class="currency-symbol">&#8377;@Model.TotalAmount.ToString("N2")</span> with Card';
         });
     });
 </script>
@@ -154,4 +154,4 @@
 @{
     // Add anti-forgery token for AJAX requests
 }
-@Html.AntiForgeryToken()
+@Html.AntiForgeryToken()@Html.AntiForgeryToken()

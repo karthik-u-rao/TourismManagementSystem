@@ -27,6 +27,49 @@ html, body {
   color: #222;
 }
 
+/* Enhanced currency symbol styling for better rendering */
+.currency-symbol, 
+.price-amount,
+.payment-amount {
+  font-family: 'Segoe UI', 'Noto Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', 'DejaVu Sans', Arial, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: inherit;
+  display: inline-block;
+}
+
+/* Fallback for rupee symbol - multiple approaches */
+.rupee-symbol {
+  font-family: 'Segoe UI', 'Noto Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', Arial, sans-serif;
+}
+
+.rupee-symbol::before {
+  content: "?";
+  font-family: 'Segoe UI', 'Noto Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', Arial, sans-serif;
+}
+
+/* Alternative approach using CSS content */
+.currency-inr::before {
+  content: "\20B9"; /* Unicode for Indian Rupee */
+  font-family: 'Segoe UI', 'Noto Sans', 'Arial Unicode MS', 'Lucida Sans Unicode', Arial, sans-serif;
+}
+
+/* For browsers that don't support the rupee symbol */
+@supports not (content: "?") {
+  .currency-symbol::before {
+    content: "Rs. ";
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+}
+
+/* Font preload for better performance */
+@font-face {
+  font-family: 'Rupee Foradian';
+  src: url('data:font/woff2;base64,') format('woff2');
+  font-display: fallback;
+}
+
 /* Navbar styling with proper z-index */
 .navbar {
   background: linear-gradient(90deg, #1b6ec2 60%, #17a2b8 100%) !important;
